@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explore Your City</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        
+        header {
+            position: relative;
+            height: 100vh;
+            color: white;
+            text-align: center;
+            overflow: hidden;
+        }
+        
+        .header-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('back.jpg') no-repeat center center/cover;
+            opacity: 0;
+            animation: fadeIn 2s ease-in-out forwards;
+        }
+        
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 15px;
+        }
+        
+        .nav-links li a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-links li a::after {
+            content: '';
+            display: block;
+            width: 0;
+            height: 2px;
+            background: red;
+            transition: width 0.3s ease;
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+        }
+        
+        .nav-links li a:hover::after {
+            width: 100%;
+        }
+        
+        .add-listing {
+            background: red;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 15px;
+            margin-top: -70px;
+            transition: background 0.3s ease;
+        }
+        
+        .add-listing:hover {
+            background: darkred;
+        }
+        
+        .hero {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            z-index: 2;
+            animation: heroFadeIn 2s ease-in-out forwards 0.5s;
+        }
+        
+        @keyframes heroFadeIn {
+            0% {
+                opacity: 0;
+                transform: translate(-60%, -50%);
+            }
+            100% {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+        
+        .hero h1, .hero p, .search-bar, .filters {
+            opacity: 0;
+            animation: slideIn 1.2s ease-out forwards;
+        }
+        
+        .hero h1 {
+            animation-delay: 0.3s;
+        }
+        
+        .hero p {
+            animation-delay: 0.6s;
+        }
+        
+        .search-bar {
+            margin-top: 20px;
+            animation-delay: 0.9s;
+        }
+        
+        .filters {
+            animation-delay: 1.2s;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        h1 {
+            font-size: 50px;
+        }
+        
+        .search-bar input {
+            padding: 10px;
+            margin: 5px;
+            width: 200px;
+            border-radius: 15px;
+            border: 2px solid transparent;
+            transition: border-color 0.3s ease;
+        }
+        
+        .search-bar input:focus {
+            border-color: red;
+            outline: none;
+        }
+        
+        .search-bar button {
+            background: red;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 15px;
+            width: 100px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        .search-bar button:hover {
+            background: white;
+            color: red;
+        }
+        
+        .filters button {
+            background: white;
+            border: none;
+            padding: 10px;
+            margin: 5px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background 0.3s ease, transform 0.3s ease;
+        }
+        
+        .filters button:hover {
+            background: red;
+            color: white;
+            transform: scale(1.05);
+        }
+        
+        .logo img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        /* Section styling */
+        .cities-section {
+            background: red;
+            padding: 50px 0;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 50px;
+        }
+        
+        /* Sliding container */
+        .cities-slider {
+            display: flex;
+            width: 300%;
+            gap: 20px;
+            flex-wrap: nowrap;
+            animation: slide 20s linear infinite;
+            will-change: transform;
+        }
+        
+        /* Individual city container */
+        .city {
+            width: 30%;
+            height: 250px;
+            background: black;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            border-radius: 10px;
+            flex-shrink: 0;
+            transition: transform 0.5s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .city:hover {
+            transform: scale(1.05);
+        }
+        
+        /* City images */
+        .city img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+        
+        /* Book tour button */
+        .book-tour {
+            display: block;
+            margin: 10px auto;
+            padding: 8px 15px;
+            background: white;
+            color: black;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+        
+        .book-tour:hover {
+            background: red;
+            color: white;
+        }
+        
+        /* Continuous sliding animation (Left to Right) */
+        @keyframes slide {
+            0% {
+                transform: translate3d(-100%, 0, 0);
+            }
+            100% {
+                transform: translate3d(0%, 0, 0);
+            }
+        }
+        .reviews-section {
+            padding: 60px 20px;
+            background-color: #f8f8f8;
+            text-align: center;
+        }
+        
+        .reviews-section h2 {
+            font-size: 36px;
+            color: #333;
+            margin-bottom: 40px;
+        }
+        
+        .reviews-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .review-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .review-card:hover {
+            transform: translateY(-8px);
+        }
+        
+        .review-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .review-header img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 15px;
+            border: 2px solid red;
+        }
+        
+        .reviewer-name {
+            font-weight: bold;
+            color: #333;
+            font-size: 18px;
+        }
+        
+        .review-text {
+            color: #666;
+            font-size: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .stars {
+            color: gold;
+            font-size: 20px;
+        }
+
+        .visited-places {
+            background: linear-gradient(to bottom, #007bff, #ffffff, #dc3545);
+            text-align: center;
+            padding: 50px 20px;
+        }
+        
+        .visited-places h2 {
+            font-size: 32px;
+            font-weight: bold;
+            color: #fff;
+            background: #dc3545;
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 5px;
+        }
+        
+        .places-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 30px auto;
+        }
+        
+        .place {
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        .place img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 10px;
+            transition: opacity 0.3s ease-in-out;
+        }
+        
+        .place-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            text-align: left;
+        }
+        
+        .place h3 {
+            font-size: 20px;
+            margin: 0;
+            color: #007bff;
+        }
+        
+        .place p {
+            font-size: 14px;
+            margin: 5px 0 0;
+            color: #ffffff;
+        }
+        
+        .place:hover {
+            transform: scale(1.05);
+        }
+        
+        .place:hover img {
+            opacity: 0.7;
+        }
+        
+        footer {
+            background-color: #0d0d12;
+            color: #ffffff;
+            padding: 40px 0;
+            font-family: Arial, sans-serif;
+        }
+        
+        .footer-container {
+            display: flex;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            flex-wrap: wrap;
+            align-items: flex-start;
+        }
+        
+        .footer-column {
+            flex: 1;
+            min-width: 200px;
+            margin: 10px 20px;
+        }
+        
+        .footer-column h3 {
+            margin-bottom: 15px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .footer-column ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .footer-column ul li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-column ul li a {
+            color: #ffffff;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-column ul li a:hover {
+            color: #bbbbbb;
+        }
+        
+        .footer-column p {
+            margin-bottom: 10px;
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #ffffff;
+            margin-top: 20px;
+        }
+        
+        .footer-bottom p {
+            font-size: 14px;
+            color: #ffffff;
+        }
+        
+        .footer-bottom span {
+            color: rgb(255, 255, 255);
+        }
+        
+        .social-icons {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .social-icons a {
+            display: inline-block;
+            width: 35px;
+            height: 35px;
+            background: #ffffff;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .social-icons a img {
+            width: 20px;
+            height: 20px;
+            filter: invert(1);
+            transition: transform 0.3s;
+        }
+        
+        .social-icons a:hover img {
+            transform: scale(1.2);
+        }
+        
+
+
+
+        @media (max-width: 800px) {
+            h1 {
+                font-size: 36px;
+            }
+            .search-bar input {
+                width: 100%;
+            }
+            .search-bar button {
+                width: 100%;
+            }
+            .filters {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .filters button {
+                flex: 1;
+                margin: 5px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            nav {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            .nav-links {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .hero {
+                top: 35%;
+            }
+            .search-bar input
+             {
+                width: 100%;
+            }
+            .search-bar button{
+                width: 50%;
+            }
+        }
+        
+        @media (min-width: 801px) and (max-width: 1280px) {
+            .cities-slider {
+                width: 200%;
+            }
+            .city {
+                width: 40%;
+            }
+            .reviews-container {
+                grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            }
+            .footer-container {
+                flex-wrap: wrap;
+            }
+
+        }
+        
+
+
+
+        /* Hide mobile nav by default on desktop */
+.mobile-nav {
+    display: none;
+  }
+  
+  /* Show on screens below 800px */
+  @media (max-width: 800px) {
+    .mobile-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      background-color: #000;
+      position: relative;
+      z-index: 1000;
+     height: 20px;
+    }
+  
+    .mobile-logo img {
+      width: 50px;
+      height: auto;
+      margin-left: -290px;
+      margin-top: -10px;
+    }
+  
+    .hamburger {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      z-index: 1001;
+      margin-top: -50px;
+      margin-left: 290px;
+    }
+  
+    .hamburger div {
+      width: 30px;
+      height: 3px;
+      background-color: red;
+      transition: 0.3s ease;
+    }
+  
+    .mobile-menu {
+      display: none;
+      flex-direction: column;
+      position: absolute;
+      top: 60px;
+      left: 0;
+      width: 100%;
+      background-color: #000;
+      padding: 20px 0;
+      text-align: center;
+      z-index: 999;
+    }
+  
+    .mobile-menu li {
+      margin: 10px 0;
+    }
+  
+    .mobile-menu li a, .add-listing {
+      color: #fff;
+      text-decoration: none;
+      font-size: 18px;
+      padding: 10px;
+    }
+  
+    .mobile-menu.active {
+      display: block;
+      animation: slideDown 0.4s ease-in-out;
+    }
+  
+    @keyframes slideDown {
+      0% {
+        transform: translateY(-100%);
+        opacity: 0;
+      }
+      100% {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+    .nav-links{
+        display: none;
+    }
+    .logo{
+        display: none;
+    }
+  }
+  
+
+
+
+
+
+    </style>
+
+</head>
+<body>
+    <!-- ✅ Mobile Navigation -->
+<nav class="mobile-nav">
+<div class="mobile-logo">
+  <img src="logo.png" alt="Logo">
+</div>
+
+<div class="hamburger" id="hamburger">
+  <div></div>
+  <div></div>
+  <div></div>
+</div>
+
+<ul class="mobile-menu" id="mobileMenu">
+  <li><a href="#">About</a></li>
+  <li><a href="#">Video</a></li>
+  <li><a href="#">Blog</a></li>
+  <li><a href="#">Contact</a></li>
+  <li><button class="add-listing">Signup</button></li>
+</ul>
+</nav>
+    <header>
+        <div class="header-bg"></div>
+        <div class="overlay"></div>
+        <nav>
+            <div class="logo"><img src="logo.png" alt=""></div>
+            <ul class="nav-links">
+                <li><a href="#">About</a></li>
+                <li><a href="#">Video</a></li>
+                <li><a href="#">Blog</a></li>
+                <li><a href="#">Contact</a></li>
+                <li><button class="add-listing">Signup</button></li>
+            </ul>
+        </nav>
+
+
+  
+
+
+
+
+
+        <div class="hero">
+            <h1>Explore <br> <span>your amazing Tour</span></h1>
+            <p>Find great places to stay, eat, shop, or visit</p>
+            <div class="search-bar">
+                <input type="text" placeholder="Ex: hotels, restaurants, malls">
+                <input type="text" placeholder="Where">
+                <button>Search</button>
+            </div>
+            <div class="filters">
+                <button>Restaurants</button>
+                <button>Hotels</button>
+                <button>Places</button>
+                <button>Shopping</button>
+            </div>
+        </div>
+    </header>
+    
+    
+    <!-- Cities Section -->
+    <div class="cities-section">
+        <div class="cities-slider">
+            <!-- City 1 -->
+            <div class="city">
+                <img src="paris.jpg" alt="Paris">
+                <h3>Paris, France</h3>
+                <p>The city of love and lights, home to the Eiffel Tower.</p>
+                <button class="book-tour">Book Tour</button>
+            </div>
+            <!-- City 2 -->
+            <div class="city">
+                <img src="rome.jpg" alt="Rome">
+                <h3>Rome, Italy</h3>
+                <p>Explore the ancient ruins and the Colosseum.</p>
+                <button class="book-tour">Book Tour</button>
+            </div>
+            <!-- City 3 -->
+            <div class="city">
+                <img src="tokyo.jpg" alt="Tokyo">
+                <h3>Tokyo, Japan</h3>
+                <p>A mix of tradition and futuristic skyline.</p>
+                <button class="book-tour">Book Tour</button>
+            </div>
+            <!-- City 4 -->
+            <div class="city">
+                <img src="dubai.jpg" alt="Dubai">
+                <h3>Dubai, UAE</h3>
+                <p>Luxury and modern skyscrapers in the desert.</p>
+                <button class="book-tour">Book Tour</button>
+            </div>
+            <!-- City 5 -->
+            <div class="city">
+                <img src="nyc.jpg" alt="New York">
+                <h3>New York, USA</h3>
+                <p>The city that never sleeps, full of energy.</p>
+                <button class="book-tour">Book Tour</button>
+            </div>
+            <!-- City 6 -->
+            <div class="city">
+                <img src="sydney.jpg" alt="Sydney">
+                <h3>Sydney, Australia</h3>
+                <p>Famous for its Opera House and beautiful harbor.</p>
+                <button class="book-tour">Book Tour</button>
+            </div>
+        </div>
+    </div>
+    <section class="visited-places">
+        <h2>Visited Places</h2>
+        <div class="places-container">
+            <div class="place">
+                <img src="image1 (1).jpg" alt="Place 1">
+                <div class="place-info">
+                   
+                    <p>The city that never sleeps culture.</p>
+                </div>
+            </div>
+            <div class="place">
+                <img src="image1 (2).jpg" alt="Place 2">
+                <div class="place-info">
+                   
+                    <p>Romance, art, and  await you.</p>
+                </div>
+            </div>
+            <div class="place">
+                <img src="image1 (3).jpg" alt="Place 3">
+                <div class="place-info">
+                   
+                    <p>Where tradition meets futuristic technology.</p>
+                </div>
+            </div>
+            <div class="place">
+                <img src="image1 (4).jpg" alt="Place 4">
+                <div class="place-info">
+                    
+                    <p>The land of skyscrapers and luxury.</p>
+                </div>
+            </div>
+            <div class="place">
+                <img src="image1 (5).jpg" alt="Place 5">
+                <div class="place-info">
+                   
+                    <p>History and modern attractions combined.</p>
+                </div>
+            </div>
+            <div class="place">
+                <img src="image1 (6).jpg" alt="Place 4">
+                <div class="place-info">
+              
+                    <p>The land of skyscrapers and luxury.</p>
+                </div>
+            </div>
+            <div class="place">
+                <img src="image1 (7).jpg" alt="Place 5">
+                <div class="place-info">
+                
+                    <p>History and modern attractions combined.</p>
+                </div>
+            </div>
+            <div class="place">
+                <img src="image1 (8).jpg" alt="Place 6">
+                <div class="place-info">
+                  
+                    <p>Mountains and the famous Opera House.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+
+
+    <section class="reviews-section">
+        <h2>Honest Reviews</h2>
+        <div class="reviews-container">
+          <!-- Review Card 1 -->
+          <div class="review-card">
+            <div class="review-header">
+              <img src="person1.jpg" alt="Reviewer 1">
+              <span class="reviewer-name">Sarah Malik</span>
+            </div>
+            <p class="review-text">Amazing experience! Everything was smooth, and I felt safe throughout. Highly recommend!</p>
+            <div class="stars">
+              ★★★★★
+            </div>
+          </div>
+      
+          <!-- Review Card 2 -->
+          <div class="review-card">
+            <div class="review-header">
+              <img src="person2.jpg" alt="Reviewer 2">
+              <span class="reviewer-name">Omar Khan</span>
+            </div>
+            <p class="review-text">The team was super responsive and helpful. It’s rare to find such service these days!</p>
+            <div class="stars">
+              ★★★★★
+            </div>
+          </div>
+      
+          <!-- Review Card 3 -->
+          <div class="review-card">
+            <div class="review-header">
+              <img src="person3.jpg" alt="Reviewer 3">
+              <span class="reviewer-name">Zara Ameen</span>
+            </div>
+            <p class="review-text">Clean, fast, and reliable. What more could you want? Big thumbs up!</p>
+            <div class="stars">
+              ★★★★★
+            </div>
+          </div>
+      
+          <!-- Review Card 4 -->
+          <div class="review-card">
+            <div class="review-header">
+              <img src="person4.jpg" alt="Reviewer 4">
+              <span class="reviewer-name">Ali Raza</span>
+            </div>
+            <p class="review-text">Service was good but had a small delay. Still satisfied overall.</p>
+            <div class="stars">
+              ★★★★★
+            </div>
+          </div>
+      
+          <!-- Review Card 5 -->
+          <div class="review-card">
+            <div class="review-header">
+              <img src="person5.jpg" alt="Reviewer 5">
+              <span class="reviewer-name">Daniya Noor</span>
+            </div>
+            <p class="review-text">User interface is beautiful and functional. I enjoyed every bit of it.</p>
+            <div class="stars">
+              ★★★★★
+            </div>
+          </div>
+      
+          <!-- Review Card 6 -->
+          <div class="review-card">
+            <div class="review-header">
+              <img src="person6.jpg" alt="Reviewer 6">
+              <span class="reviewer-name">Hassan Javed</span>
+            </div>
+            <p class="review-text">Loved the experience. Will definitely be back with friends!</p>
+            <div class="stars">
+              ★★★★★
+            </div>
+          </div>
+        </div>
+      </section>
+      <footer>
+        <div class="footer-container">
+            <div class="footer-column">
+            <h3>Travel and tours</h3>
+            <p>Far far away, behind <br>the word mountains,<br> far from the countries.</p>
+            
+        </div>
+        
+        <div class="footer-column">
+                
+            <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Terms & Conditions</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Help</a></li>
+                    <li><a href="#">Rooms</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Support</h3>
+                <ul>
+                    <li><a href="#">Our Location</a></li>
+                    <li><a href="#">The Hosts</a></li>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Contact</a></li>
+                    <li><a href="#">Restaurant</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Contact Info</h3>
+                <p>Address: 98 West 21th Street, Suite 721 New York NY 10016</p>
+                <p>Phone: (+1) 435 3533</p>
+                <p>Email: info@yourdomain.com</p>
+            </div>
+            
+        </div>
+        <div class="footer-bottom">
+            <p>Copyright © 2024 All rights reserved | This template is made with <span> ❤</span> by HA agency</p>
+            
+            <div class="social-icons">
+                <a href="#"><img src="https://th.bing.com/th/id/R.ac7c4437586fd33b6b0f65925408b0ad?rik=6FfGDRFJujUh8g&riu=http%3a%2f%2fwww.newdesignfile.com%2fpostpic%2f2013%2f01%2ffacebook-icon-black-circle_155320.png&ehk=BuMAJhlSegbPE3BBoW22OQEsHZbMWclvDlUgbZjUMGA%3d&risl=&pid=ImgRaw&r=0" alt="Facebook"></a>
+                    <a href="#"><img src="https://th.bing.com/th/id/OIP.9_ZXseiaB1tgYquikdl68AHaFj?w=268&h=200&c=7&r=0&o=5&dpr=1.7&pid=1.7" alt="Instagram"></a>
+                    <a href="#"><img src="https://th.bing.com/th/id/OIP.VsqHoEuY7p-i84-_MHWGkAHaHw?rs=1&pid=ImgDetMain" alt="YouTube"></a>
+                    <a href="#"><img src="https://th.bing.com/th/id/OIP.Vr8DfHIHQWd3rUGnO20uOgHaHa?w=172&h=180&c=7&r=0&o=5&dpr=1.7&pid=1.7" alt="Twitter"></a>
+                    <a href="#"><img src="https://th.bing.com/th/id/OIP.eb41Yo7b_b1DPmvsgGqyPgHaHa?w=162&h=180&c=7&r=0&o=5&dpr=1.7&pid=1.7" alt="Indeed"></a>
+                </div>
+            </div>
+        </div>
+        
+    </footer>
+    <script>
+// This will be executed when the page loads
+window.onload = function () {
+    // Set the hero section's position correctly
+    document.querySelector('.hero').style.left = '50%';
+    
+    // Select all filter buttons
+    const filters = document.querySelectorAll(".filters button");
+    
+    // Select the search input fields
+    const searchInput = document.querySelector(".search-bar input:first-child");
+    const locationInput = document.querySelector(".search-bar input:nth-child(2)");
+    
+    // Select the search button
+    const searchButton = document.querySelector(".search-bar button");
+    
+    // Add event listener to each filter button
+    filters.forEach(button => {
+        button.addEventListener("click", function () {
+            searchInput.value = this.textContent; // Set input value to button text
+        });
+    });
+    
+    // Add event listener to search button
+    searchButton.addEventListener("click", function () {
+        searchInput.value = ""; // Clear search input
+        locationInput.value = ""; // Clear location input
+        window.location.reload(); // Refresh the page
+    });
+
+    
+
+};
+
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+  
+    hamburger.addEventListener('click', () => {
+      mobileMenu.classList.toggle('active');
+    });
+ 
+  
+</script>
+    
+</body>
+</html>
